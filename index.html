@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tender Radar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{--ink:#12343B;--soft:#4A6469;--mint:#E4F4EC;--leaf:#1F7A5C;--leaf-dark:#155A43;--sun:#FFC94A;--paper:#FFFFFF;--line:#B9D3C7;--warn:#FFF1CC;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--mint);color:var(--ink);font:20px/1.5 "Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:2rem;margin:0;line-height:1.15}
+h2{font-size:1.4rem;margin:0 0 6px}
+h3{font-size:1.1rem;margin:0 0 4px}
+p{margin:0 0 12px}
+.tag{color:var(--soft);margin:4px 0 16px}
+.practice{background:var(--warn);border:2px solid var(--sun);border-radius:var(--r);padding:10px 14px;font-size:.9rem;margin-bottom:18px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.step{font:inherit;font-weight:700;border:2px solid var(--line);background:var(--paper);color:var(--ink);border-radius:var(--r);min-height:64px;padding:8px 10px;cursor:pointer;text-align:center}
+.step small{display:block;font-weight:400;color:var(--soft);font-size:.75rem}
+.step[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.step[aria-selected="true"] small{color:#D6E7E0}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid var(--sun);outline-offset:2px}
+.card{background:var(--paper);border-radius:var(--r);padding:20px;border:2px solid var(--line)}
+label{display:block;font-weight:700;margin:14px 0 4px}
+input,select{width:100%;font:inherit;border:2px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);background:#fff;min-height:52px}
+.hint{color:var(--soft);font-size:.85rem;margin:4px 0 0}
+.go{font:inherit;font-weight:700;background:var(--leaf);color:#fff;border:0;border-radius:var(--r);min-height:56px;padding:0 24px;cursor:pointer}
+.go:hover{background:var(--leaf-dark)}
+.row{display:flex;gap:10px}.row input{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{font:inherit;font-size:1rem;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer}
+.chip span{margin-left:8px;font-weight:700}
+.tender{border:2px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+.tender p{margin:0 0 6px}
+.meta{font-size:.85rem;color:var(--soft)}
+.why{display:inline-block;background:var(--mint);border-radius:999px;font-size:.8rem;padding:2px 10px;margin-top:4px}
+.soon{background:var(--warn);color:#6B4A00;border:1px solid var(--sun);border-radius:999px;font-size:.75rem;font-weight:700;padding:2px 10px;margin-left:6px}
+.ex{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--soft)}
+.mail{border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.mail header{background:var(--ink);color:#fff;padding:10px 16px;font-size:.85rem}
+.mail div{padding:14px 16px}
+.mail li{margin:0 0 8px}
+[hidden]{display:none!important}
+@media (max-width:480px){body{font-size:18px}.row{flex-direction:column}.go{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Tender Radar</h1>
+  <p class="tag">Finds public work you could win, and tells you in plain words.</p>
+  <p class="practice"><b>Practice mode.</b> Every tender below is made-up example data. The real version will read Canada's open tender list.</p>
+
+  <div class="steps" role="tablist" aria-label="Steps">
+    <button class="step" role="tab" id="t1" aria-controls="p1" aria-selected="true" data-p="p1">1. Your work<small>what do you sell?</small></button>
+    <button class="step" role="tab" id="t2" aria-controls="p2" aria-selected="false" data-p="p2">2. Matches<small>what we found</small></button>
+    <button class="step" role="tab" id="t3" aria-controls="p3" aria-selected="false" data-p="p3">3. Your email<small>what you'd get</small></button>
+  </div>
+
+  <section class="card" id="p1" role="tabpanel" aria-labelledby="t1">
+    <h2>What do you sell?</h2>
+    <p>Add a few simple words, like "cleaning" or "printing". We'll look for tenders that mention them.</p>
+    <form class="row" id="addForm">
+      <label class="sr" for="word" style="position:absolute;left:-9999px">Add a word</label>
+      <input id="word" autocomplete="off" placeholder="Type a word, then press Add">
+      <button class="go" type="submit">Add</button>
+    </form>
+    <div class="chips" id="chips" aria-label="Your words"></div>
+    <p class="hint">Tap a word to remove it.</p>
+    <label for="region">Where can you work?</label>
+    <select id="region">
+      <option value="all">All of Ontario</option>
+      <option>Toronto area</option>
+      <option>Eastern Ontario</option>
+      <option>Northern Ontario</option>
+      <option>Southwestern Ontario</option>
+    </select>
+    <button class="go" id="to2" style="margin-top:18px">Next: see matches</button>
+  </section>
+
+  <section class="card" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+    <h2 id="mh">Matches</h2>
+    <div id="list"></div>
+  </section>
+
+  <section class="card" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+    <h2>Your daily email</h2>
+    <p>Every morning you'd get a short note like this. No login needed to read it.</p>
+    <div class="mail"><header id="subj"></header><div id="body"></div></div>
+  </section>
+</div>
+
+<script>
+var $=function(id){return document.getElementById(id)};
+var words=["cleaning","printing"];
+var today=new Date();
+function plus(d){var x=new Date(today);x.setDate(x.getDate()+d);return x}
+function fmt(d){return d.toLocaleDateString("en-CA",{month:"long",day:"numeric"})}
+var T=[
+ {t:"Office cleaning for a regional building",b:"Example Department A",r:"Toronto area",d:21,s:"The department wants a company to clean one office building three evenings a week for two years."},
+ {t:"Printing of public information brochures",b:"Example Agency B",r:"All of Ontario",d:9,s:"A one-time order of about 5,000 printed brochures, delivered within 30 days of winning."},
+ {t:"Snow removal for a parking lot",b:"Example Board C",r:"Northern Ontario",d:33,s:"Clearing snow and salting one parking lot on winter mornings, from November to March."},
+ {t:"Catering for a two-day training event",b:"Example Ministry D",r:"Eastern Ontario",d:14,s:"Lunch and coffee for about 60 people on two days in the spring."},
+ {t:"Website updates for a small agency",b:"Example Agency E",r:"All of Ontario",d:26,s:"Monthly updates to an existing website, including fixing broken pages and adding new notices."},
+ {t:"Cleaning and repair of school windows",b:"Example Board F",r:"Southwestern Ontario",d:18,s:"Washing and small repairs for windows at three schools before the fall term."}
+];
+function show(id){
+  ["p1","p2","p3"].forEach(function(p){$(p).hidden=(p!==id)});
+  document.querySelectorAll(".step").forEach(function(b){b.setAttribute("aria-selected",b.dataset.p===id?"true":"false")});
+  if(id==="p2")renderList();if(id==="p3")renderMail();
+  window.scrollTo({top:0});
+}
+document.querySelectorAll(".step").forEach(function(b){b.addEventListener("click",function(){show(b.dataset.p)})});
+$("to2").addEventListener("click",function(){show("p2")});
+
+function renderChips(){
+  var c=$("chips");c.textContent="";
+  words.forEach(function(w,i){
+    var b=document.createElement("button");b.type="button";b.className="chip";
+    b.setAttribute("aria-label","Remove "+w);
+    b.appendChild(document.createTextNode(w));
+    var x=document.createElement("span");x.setAttribute("aria-hidden","true");x.textContent="×";b.appendChild(x);
+    b.addEventListener("click",function(){words.splice(i,1);renderChips()});
+    c.appendChild(b);
+  });
+}
+$("addForm").addEventListener("submit",function(e){
+  e.preventDefault();var v=$("word").value.trim().toLowerCase();
+  if(v&&words.indexOf(v)<0){words.push(v);renderChips()}$("word").value="";
+});
+function matches(){
+  var reg=$("region").value;
+  return T.map(function(x){
+    var text=(x.t+" "+x.s).toLowerCase();
+    var hit=words.filter(function(w){return text.indexOf(w)>-1});
+    return {x:x,hit:hit};
+  }).filter(function(m){
+    return m.hit.length&&(reg==="all"||m.x.r===reg||m.x.r==="All of Ontario");
+  });
+}
+function renderList(){
+  var m=matches(),box=$("list");box.textContent="";
+  $("mh").textContent=m.length?m.length+(m.length===1?" match for you":" matches for you"):"No matches yet";
+  if(!m.length){var p=document.createElement("p");p.textContent="Nothing matched. Go back and try a different word, like “printing” or “catering”.";box.appendChild(p);return}
+  m.forEach(function(o){
+    var d=document.createElement("div");d.className="tender";
+    var ex=document.createElement("div");ex.className="ex";ex.textContent="Example";
+    var h=document.createElement("h3");h.textContent=o.x.t;
+    if(o.x.d<=14){var s=document.createElement("span");s.className="soon";s.textContent="Closing soon";h.appendChild(s)}
+    var p=document.createElement("p");p.textContent=o.x.s;
+    var mt=document.createElement("p");mt.className="meta";mt.textContent=o.x.b+" · "+o.x.r+" · Closes "+fmt(plus(o.x.d))+" (in "+o.x.d+" days)";
+    var w=document.createElement("span");w.className="why";w.textContent="Matched because: "+o.hit.join(", ");
+    d.appendChild(ex);d.appendChild(h);d.appendChild(p);d.appendChild(mt);d.appendChild(w);box.appendChild(d);
+  });
+}
+function renderMail(){
+  var m=matches();
+  $("subj").textContent="Subject: "+(m.length?m.length+(m.length===1?" tender":" tenders")+" for you today":"No new tenders today");
+  var b=$("body");b.textContent="";
+  var p=document.createElement("p");p.textContent="Good morning! Here's what we found for "+(words.length?words.join(", "):"your work")+":";b.appendChild(p);
+  var ul=document.createElement("ul");ul.style.paddingLeft="20px";
+  m.forEach(function(o){var li=document.createElement("li");li.textContent=o.x.t+" — closes "+fmt(plus(o.x.d));ul.appendChild(li)});
+  if(m.length)b.appendChild(ul);
+  var q=document.createElement("p");q.className="meta";q.textContent="In the real version, each line links to the official notice.";b.appendChild(q);
+}
+renderChips();
+</script>
+</body>
+</html>
