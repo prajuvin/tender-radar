@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tender Radar</title>
+<meta name="description" content="Find Government of Canada tenders that match what your small business sells, explained in plain words.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="wrap" id="main">
+  <h1>Tender Radar</h1>
+  <p class="tag">Finds government work your business could win, and explains it in plain words.</p>
+  <p class="fresh" id="fresh" role="status">Loading today's tenders…</p>
+
+  <div class="steps" role="tablist" aria-label="Steps">
+    <button class="step" role="tab" id="t1" aria-controls="p1" aria-selected="true" data-p="p1">1. Your work<small>what do you sell?</small></button>
+    <button class="step" role="tab" id="t2" aria-controls="p2" aria-selected="false" data-p="p2">2. Matches<small>what we found</small></button>
+    <button class="step" role="tab" id="t3" aria-controls="p3" aria-selected="false" data-p="p3">3. Keep it<small>save or share</small></button>
+  </div>
+
+  <section class="card" id="p1" role="tabpanel" aria-labelledby="t1">
+    <h2>What do you sell?</h2>
+    <p>Add a few simple words, like "cleaning" or "printing". We look for them in every open tender.</p>
+    <form class="row" id="addForm">
+      <label class="sr" for="word">Add a word</label>
+      <input id="word" autocomplete="off" placeholder="Type a word, then press Add">
+      <button class="go" type="submit">Add</button>
+    </form>
+    <p class="err" id="wordErr" hidden></p>
+    <div class="chips" id="chips" aria-label="Your words"></div>
+    <p class="hint" id="chipHint">Tap a word to remove it.</p>
+    <p class="hint">Not sure? Try one of these:</p>
+    <div class="chips" id="ideas"></div>
+    <label for="where">Where can you do the work?</label>
+    <select id="where">
+      <option value="ontario">Ontario (including Ottawa)</option>
+      <option value="ncr">Ottawa-Gatineau area only</option>
+      <option value="anywhere">Anywhere in Canada</option>
+    </select>
+    <button class="go wide" id="to2">Show my matches</button>
+  </section>
+
+  <section class="card" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+    <h2 id="mh">Matches</h2>
+    <p class="hint" id="mhint"></p>
+    <div id="list"></div>
+    <button class="go ghost wide" id="more" hidden>Show more</button>
+  </section>
+
+  <section class="card" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+    <h2>Keep your radar</h2>
+    <p>This link opens Tender Radar with your words already filled in. Bookmark it, or send it to your partner.</p>
+    <label for="share">Your radar link</label>
+    <div class="row"><input id="share" readonly><button class="go" id="copyLink" type="button">Copy</button></div>
+    <label for="digest">Today's list, ready to paste into an email</label>
+    <textarea id="digest" readonly></textarea>
+    <button class="go ghost" id="copyDigest" type="button">Copy the list</button>
+    <p class="status" id="copied" role="status"></p>
+    <p class="hint">Coming next: a free daily email, so you don't need to check.</p>
+  </section>
+
+  <footer>
+    <p>Data: Government of Canada, <a href="https://open.canada.ca/data/en/dataset/6abd20d4-7a1c-4b38-baa2-9525d0bb2fd2">CanadaBuys tender notices</a>, used under the <a href="https://open.canada.ca/en/open-government-licence-canada">Open Government Licence – Canada</a>. Tender Radar is not a government service. Always read the official notice before you bid.</p>
+    <p>Built by <a href="https://github.com/prajuvin">Praju</a> at YHWH Digital. <a href="https://github.com/prajuvin/tender-radar">Source code</a>.</p>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
