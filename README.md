@@ -2,9 +2,9 @@
 
 **The Government of Canada posts hundreds of open tenders a day. Tender Radar finds the ones that match what your small business sells, and explains each in plain words.**
 
-**Try it:** https://prajuvin.github.io/tender-radar/ *(live once GitHub Pages is on)*
+**Try it:** https://tender-radar-three-navy.vercel.app
 
-It uses real data. Every morning a robot downloads the Government's open tender list (about 900 notices) and the page searches it for your words.
+It uses real data. The Government's open tender list (about 900 notices) is downloaded fresh each time the site is built on Vercel. Automatic daily rebuilds start once this repo is linked to Vercel (see the roadmap). The page searches it for your words.
 
 ## How to use it (no sign-up)
 
@@ -20,7 +20,7 @@ Government work can be steady income for small businesses, but finding the right
 
 | Does | Doesn't (yet) |
 | --- | --- |
-| Reads the real open tender list every day | Send daily emails |
+| Reads the real open tender list | Send daily emails |
 | Matches words at the start of any word ("clean" finds cleaning, cleaners) | Understand meaning (it won't know "janitorial" means cleaning) |
 | Drops tenders that are past their deadline, even if the feed still says open | Help you write a bid |
 | Links to the official notice, or shows the reference number and buyer contact when there's no link | Cover provincial or city tenders |
@@ -31,9 +31,9 @@ Always read the official notice before you bid. Tender Radar is not a government
 
 ```
 CanadaBuys open data (CSV, daily)
-   → radar/fetch.py    download, clean, drop closed tenders   (GitHub Action, 7:17am Toronto)
+   → radar/fetch.py    download, clean, drop closed tenders   (on every Vercel build)
    → docs/data/tenders.json
-   → docs/index.html + app.js    matching in the browser       (GitHub Pages)
+   → docs/index.html + app.js    matching in the browser       (Vercel)
 ```
 
 Why this design: [`decisions/ADR-001-how-tender-radar-runs.md`](decisions/ADR-001-how-tender-radar-runs.md).
@@ -55,13 +55,14 @@ python tests/e2e_check.py    # browser test on real data at phone and desktop wi
                              # checks the website's matches equal the Python matcher's
 ```
 
-Last full check (2026-09-23): 839 open tenders loaded, 18 unit tests passed, browser matches equal Python on every test search, and an axe accessibility scan found no WCAG A or AA issues on any screen.
+Last full check (2026-09-23): 839 open tenders loaded, 18 unit tests passed, browser matches equal Python on every test search (locally and on the live Vercel site), and an axe accessibility scan found no WCAG A or AA issues on any screen.
 
 ## Roadmap
 
 | When | What | Status |
 | --- | --- | --- |
-| Now | Real daily data, plain-language matches, shareable link | Done |
+| Now | Real data, plain-language matches, shareable link, live on Vercel | Done |
+| Now | Link the repo to Vercel so the data rebuilds daily | Not started |
 | Now | Show it to 3 Ontario vendors: what would they have missed? | Not started |
 | Next | Free daily email for saved words | Not started (waits on vendor feedback) |
 | Next | Smarter matching: related words ("janitorial" for cleaning) | Not started |
