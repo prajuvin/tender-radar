@@ -12,6 +12,12 @@ data = json.loads((ROOT / "docs/data/tenders.json").read_text())["tenders"]
 srv = subprocess.Popen([sys.executable, "-m", "http.server", "8765", "-d", str(ROOT / "docs")], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 time.sleep(1)
 fails = []
+axe = Path("/tmp/axe.min.js").read_text() if Path("/tmp/axe.min.js").exists() else None
+
+def settle(pg):
+    """Wait for entry animations to finish so contrast is measured on the page at rest."""
+    pg.wait_for_function("document.getAnimations().every(a => a.playState !== 'running' || a.effect.getComputedTiming().iterations === Infinity)", timeout=5000)
+
 try:
     with sync_playwright() as p:
         b = p.chromium.launch()
@@ -48,9 +54,14 @@ try:
             pg.click("#t3")
             if "words=software%2Ctraining" not in pg.input_value("#share"): fails.append("share link missing words: " + pg.input_value("#share"))
             if "open tender" not in pg.input_value("#digest"): fails.append("digest empty")
+            if axe:
+                for tab in ("#t1", "#t2", "#t3"):
+                    pg.click(tab); settle(pg); pg.add_script_tag(content=axe)
+                    v = pg.evaluate("axe.run(document,{runOnly:['wcag2a','wcag2aa']}).then(r=>r.violations.map(v=>v.id+' ('+v.nodes.length+'): '+v.nodes[0].target))")
+                    if v: fails.append(f"{width} a11y {tab}: {v}")
             overflow = pg.evaluate("document.documentElement.scrollWidth > window.innerWidth")
             if overflow: fails.append(f"horizontal scroll at {width}px")
-            pg.click("#t2"); pg.screenshot(path=f"/tmp/tr_real_{width}.png", full_page=False)
+            pg.click("#t2"); settle(pg); pg.screenshot(path=f"/tmp/tr_real_{width}.png", full_page=False)
             if errs: fails.append(f"JS errors: {errs}")
         b.close()
 finally:
